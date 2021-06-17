@@ -1,0 +1,53 @@
+version: "3.8"
+# volumes:
+#   db-store:
+services:
+  nginx:
+    build: ./nginx
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ../${WORK_DIR}:/var/www/html
+      - ./log/nginx:/var/log/nginx
+    depends_on:
+      - php
+
+  php:
+    build: ./php
+    volumes:
+      - ../${WORK_DIR}:/var/www/html
+      # - ./php/mhsendmail:/usr/local/bin/mhsendmail
+    depends_on:
+      - db
+
+  db:
+    # image: mysql:5.7
+    image: mariadb:10.5
+    volumes:
+      - ./mysql/data:/var/lib/mysql
+      # - db-store:/var/lib/mysql
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      # MYSQL_DATABASE: hiyoko
+      # MYSQL_USER: hiyoko
+      # MYSQL_PASSWORD: hiyoko
+      TZ: "Asia/Tokyo"
+
+  phpmyadmin:
+    image: phpmyadmin
+    environment:
+      PMA_HOST: "db"
+      UPLOAD_LIMIT: 102400000
+    ports:
+      - 8888:80
+    depends_on:
+      - db
+
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"

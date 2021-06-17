@@ -1,0 +1,18 @@
+# system file
+.idea
+.DS_Store
+.vscode
+
+# hiyoko
+hiyoko/*
+!hiyoko/index.php
+
+# infra
+infra/.env
+# log
+infra/log/nginx/*.log
+# mysql
+infra/mysql/data/*
+# nginx
+infra/nginx/sites/*.conf
+!infra/nginx/sites/default.conf
