@@ -1,18 +1,19 @@
+# laravel
 server {
-
     listen 80;
-
-    # For https
+    listen [::]:80 ipv6only=on;
+    
     listen 443 ssl;
-    ssl_certificate /etc/nginx/ssl/default.crt;
-    ssl_certificate_key /etc/nginx/ssl/default.key;
+    listen [::]:443 ssl ipv6only=on;
+    server_name api.lvh.me;
+    ssl_certificate /etc/nginx/ssl/hiyoko.pem;
+    ssl_certificate_key /etc/nginx/ssl/hiyoko-key.pem;
 
-    server_name localhost;
-    root /var/www/public;
+    root /var/www/api/public;
     index index.php index.html index.htm;
 
     location / {
-         try_files $uri $uri/ /index.php$is_args$args;
+        try_files $uri $uri?$args $uri/ /index.php?$uri&$args /index.php?$args;
     }
 
     location ~ \.php$ {
@@ -22,14 +23,5 @@ server {
         include fastcgi_params;
         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
         fastcgi_param PATH_INFO $fastcgi_path_info;
-    }
-
-    location ~ /\.ht {
-        deny all;
-    }
-
-    location /.well-known/acme-challenge/ {
-        root /var/www/letsencrypt/;
-        log_not_found off;
     }
 }
